@@ -1,0 +1,259 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+
+import '../../../../core/config/ai_config.dart';
+import '../../../../core/errors/app_failure.dart';
+import '../../../../core/network/dio_failure_mapper.dart';
+import '../../domain/entities/ai_reply.dart';
+import '../../domain/entities/ai_stream_event.dart';
+import '../dto/ai_request_dto.dart';
+import '../dto/ai_response_dto.dart';
+import 'ai_data_source.dart';
+
+/// Talks to the operator's AI proxy over HTTPS.
+///
+/// Two response modes are supported:
+/// * a single JSON envelope for plain request/response, and
+/// * Server-Sent Events (`data: {...}` lines, terminated by `data: [DONE]`)
+///   when streaming is enabled and the backend supports it.
+///
+/// The client never addresses an AI vendor directly, so no vendor API key is
+/// present in the binary.
+class RemoteAiDataSource implements AiDataSource {
+  RemoteAiDataSource({required Dio dio, required AiConfig config})
+    : _dio = dio,
+      _config = config;
+
+  final Dio _dio;
+  final AiConfig _config;
+
+  @override
+  Future<AiReply> complete(AiRequestDto request) async {
+    final uri = _requireUri();
+    try {
+      final response = await _dio.postUri<Object?>(
+        uri,
+        data: request.toJson(),
+        options: Options(
+          headers: const {'Accept': 'application/json'},
+          contentType: Headers.jsonContentType,
+        ),
+      );
+      return AiResponseDto.parse(response.data);
+    } on DioException catch (error) {
+      throw mapDioException(error);
+    } on AppFailure {
+      rethrow;
+    } catch (error) {
+      throw InvalidResponseFailure(
+        technicalMessage: error.toString(),
+        cause: error,
+      );
+    }
+  }
+
+  @override
+  Stream<AiStreamEvent> stream(AiRequestDto request) {
+    if (!_config.streamingEnabled) {
+      return _singleShot(request);
+    }
+    return _sseStream(request);
+  }
+
+  /// Emits the full reply as one delta. Used when streaming is disabled so the
+  /// UI has a single code path.
+  Stream<AiStreamEvent> _singleShot(AiRequestDto request) async* {
+    try {
+      final reply = await complete(request);
+      yield AiStreamDelta(reply.text);
+      yield AiStreamCompleted(reply);
+    } on AppFailure catch (failure) {
+      yield AiStreamFailed(failure);
+    }
+  }
+
+  Stream<AiStreamEvent> _sseStream(AiRequestDto request) {
+    final controller = StreamController<AiStreamEvent>();
+    final cancelToken = CancelToken();
+
+    // Propagate cancellation to the socket so stopping generation does not
+    // leave a request running (and billing) in the background.
+    controller.onCancel = () {
+      if (!cancelToken.isCancelled) {
+        cancelToken.cancel('client stopped generation');
+      }
+    };
+
+    unawaited(_pumpSse(request, controller, cancelToken));
+    return controller.stream;
+  }
+
+  Future<void> _pumpSse(
+    AiRequestDto request,
+    StreamController<AiStreamEvent> controller,
+    CancelToken cancelToken,
+  ) async {
+    final buffer = StringBuffer();
+    final partial = StringBuffer();
+    var completed = false;
+
+    try {
+      final response = await _dio.postUri<ResponseBody>(
+        _requireUri(),
+        data: request.toJson(),
+        cancelToken: cancelToken,
+        options: Options(
+          responseType: ResponseType.stream,
+          headers: const {'Accept': 'text/event-stream'},
+          contentType: Headers.jsonContentType,
+        ),
+      );
+
+      final body = response.data;
+      if (body == null) {
+        throw const InvalidResponseFailure(
+          technicalMessage: 'empty streaming response',
+        );
+      }
+
+      await for (final line
+          in body.stream
+              .cast<List<int>>()
+              .transform(const Utf8Decoder(allowMalformed: true))
+              .transform(const LineSplitter())) {
+        if (controller.isClosed) return;
+        final payload = _readSseData(line, buffer);
+        if (payload == null) continue;
+        if (payload == '[DONE]') {
+          completed = true;
+          break;
+        }
+
+        final event = _parseSsePayload(payload);
+        if (event == null) continue;
+
+        if (event is AiStreamDelta) {
+          partial.write(event.text);
+          controller.add(event);
+        } else if (event is AiStreamCompleted) {
+          completed = true;
+          partial
+            ..clear()
+            ..write(event.reply.text);
+          controller.add(AiStreamCompleted(event.reply));
+          break;
+        } else if (event is AiStreamFailed) {
+          completed = true;
+          controller.add(event);
+          break;
+        }
+      }
+
+      if (!completed && !controller.isClosed) {
+        // The connection ended without a terminator: treat the accumulated
+        // text as the reply, or report a malformed stream if there is none.
+        final text = partial.toString();
+        if (text.trim().isEmpty) {
+          controller.add(
+            const AiStreamFailed(
+              InvalidResponseFailure(technicalMessage: 'stream ended early'),
+            ),
+          );
+        } else {
+          controller.add(
+            AiStreamCompleted(AiReply(text: text)),
+          );
+        }
+      }
+    } on DioException catch (error) {
+      if (controller.isClosed) return;
+      final failure = mapDioException(error);
+      if (failure.kind == FailureKind.cancelled) return;
+      controller.add(AiStreamFailed(failure));
+    } on AppFailure catch (failure) {
+      if (controller.isClosed) return;
+      controller.add(AiStreamFailed(failure));
+    } catch (error, stackTrace) {
+      if (kDebugMode) debugPrint('[ai] stream error: $stackTrace');
+      if (controller.isClosed) return;
+      controller.add(
+        AiStreamFailed(
+          UnknownFailure(technicalMessage: error.toString(), cause: error),
+        ),
+      );
+    } finally {
+      if (!controller.isClosed) await controller.close();
+    }
+  }
+
+  /// Extracts the JSON payload of one SSE `data:` line, ignoring comments,
+  /// blank lines and other SSE fields.
+  String? _readSseData(String line, StringBuffer buffer) {
+    if (line.isEmpty) return null;
+    if (line.startsWith(':')) return null; // SSE comment / keep-alive
+    if (!line.startsWith('data:')) return null;
+    final value = line.substring(5).trim();
+    if (value.isEmpty) return null;
+    // Multi-line data fields are concatenated per the SSE specification.
+    if (buffer.isNotEmpty) buffer.write('\n');
+    buffer.write(value);
+    final payload = buffer.toString();
+    buffer.clear();
+    return payload;
+  }
+
+  AiStreamEvent? _parseSsePayload(String payload) {
+    final Object? decoded;
+    try {
+      decoded = jsonDecode(payload);
+    } on FormatException {
+      return null; // ignore frames we cannot read
+    }
+    if (decoded is! Map) return null;
+    final map = decoded.cast<String, dynamic>();
+
+    // Mid-stream error frame: {"error": {"code": "…", "message": "…"}}
+    if (map['error'] != null) {
+      final code = map['error'] is Map
+          ? (map['error'] as Map)['code']?.toString()
+          : map['error'].toString();
+      return AiStreamFailed(_failureFromCode(code));
+    }
+
+    final delta = map['delta'] ?? map['text'];
+    if (delta is String) return AiStreamDelta(delta);
+
+    // Some backends send the final envelope on the last frame.
+    if (map.containsKey('usage') || map.containsKey('model')) {
+      try {
+        return AiStreamCompleted(AiResponseDto.parse(map));
+      } on AppFailure {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  AppFailure _failureFromCode(String? code) => switch (code) {
+    ServerErrorCode.unauthorized => const UnauthorizedFailure(),
+    ServerErrorCode.rateLimited => const RateLimitedFailure(),
+    ServerErrorCode.quotaExceeded => const QuotaExceededFailure(),
+    ServerErrorCode.inputTooLarge => const InputTooLargeFailure(),
+    ServerErrorCode.invalidRequest => const InvalidInputFailure(),
+    ServerErrorCode.serverError => const ServerFailure(),
+    _ => const ProviderFailure(),
+  };
+
+  Uri _requireUri() {
+    final uri = _config.assistantUri;
+    if (uri == null) {
+      throw const MisconfiguredFailure(
+        technicalMessage: 'AI_BASE_URL is not configured',
+      );
+    }
+    return uri;
+  }
+}

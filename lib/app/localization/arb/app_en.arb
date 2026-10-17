@@ -1,0 +1,246 @@
+{
+  "@@locale": "en",
+  "appTitle": "Khmer AI Assistant",
+  "appTagline": "Your Khmer-first writing and learning helper",
+
+  "navHome": "Home",
+  "navChat": "Chat",
+  "navHistory": "History",
+  "navSettings": "Settings",
+  "navBack": "Back",
+
+  "homeGreeting": "Welcome. What can I help you with today?",
+  "homeAskHint": "Ask anything…",
+  "homeAskLabel": "Ask a question",
+  "homeSuggestionsTitle": "Start with an example",
+  "homeQuickActionsTitle": "Tools",
+  "homeSuggestion1": "Explain photosynthesis in simple Khmer",
+  "homeSuggestion2": "Translate “I will arrive tomorrow morning” into Khmer",
+  "homeSuggestion3": "Write a polite leave request email",
+  "homeSuggestion4": "Summarize this text in three bullet points",
+
+  "demoModeTitle": "Demo mode",
+  "demoModeBody": "No AI server is configured, so replies come from a built-in offline sample. Set the AI_BASE_URL build option to connect a real provider.",
+
+  "quotaRemaining": "{count, plural, =0{No free requests left today} =1{1 free request left today} other{{count} free requests left today}}",
+  "@quotaRemaining": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "quotaUnavailable": "Usage information is not available.",
+
+  "chatTitle": "Chat",
+  "chatNewConversation": "New chat",
+  "chatInputHint": "Message Khmer AI…",
+  "chatSend": "Send",
+  "chatStop": "Stop",
+  "chatRegenerate": "Regenerate",
+  "chatCopyMessage": "Copy message",
+  "chatCopied": "Copied to clipboard",
+  "chatEmptyTitle": "Ask your first question",
+  "chatEmptyBody": "Khmer AI answers in natural Khmer and can switch to English on request.",
+  "chatEmptySuggestion1": "What is compound interest?",
+  "chatEmptySuggestion2": "Help me write a message to my landlord",
+  "chatEmptySuggestion3": "How do I prepare for a job interview?",
+  "chatStreaming": "Writing a reply…",
+  "chatThinking": "Thinking…",
+  "chatUntitled": "New conversation",
+  "chatRenameTitle": "Rename conversation",
+  "chatRenameHint": "Conversation name",
+  "chatRenameSave": "Save",
+  "chatDeleteTitle": "Delete conversation?",
+  "chatDeleteBody": "This conversation will be removed from this device. This cannot be undone.",
+  "chatDeleteConfirm": "Delete",
+  "chatClearInput": "Clear input",
+  "chatAssistantLabel": "Assistant message",
+  "chatUserLabel": "Your message",
+
+  "historyTitle": "History",
+  "historyEmptyTitle": "No conversations yet",
+  "historyEmptyBody": "Your conversations are saved on this device only.",
+  "historyOpen": "Open",
+  "historyRename": "Rename",
+  "historyDelete": "Delete",
+  "historyMessageCount": "{count, plural, =1{1 message} other{{count} messages}}",
+  "@historyMessageCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "historyCleared": "Local chat history cleared",
+
+  "translateTitle": "Translate",
+  "translateFrom": "From",
+  "translateTo": "To",
+  "translateInputHint": "Enter the text to translate",
+  "translateOutputLabel": "Translation",
+  "translateSwap": "Swap languages",
+  "translateAction": "Translate",
+  "translateClear": "Clear",
+  "translateOutputEmpty": "The translation appears here.",
+  "translateAutoDetect": "Detect automatically",
+  "translateDetected": "Detected language: {language}",
+  "@translateDetected": {
+    "placeholders": {
+      "language": {"type": "String"}
+    }
+  },
+  "translateDisclaimer": "Machine translation can miss nuance. Please check important text.",
+
+  "languageKhmer": "Khmer",
+  "languageEnglish": "English",
+
+  "writingTitle": "Writing assistant",
+  "writingInputHint": "Paste or type your text",
+  "writingOutputLabel": "Generated draft",
+  "writingOutputPlaceholder": "The improved text appears here.",
+  "writingGenerate": "Generate",
+  "writingOutputNotice": "Generated text is a draft. Review it before you send it anywhere.",
+  "writingEditHint": "You can edit the draft before copying it.",
+  "writingTargetLanguage": "Output language",
+  "writingTone": "Tone",
+  "writingToneNeutral": "Neutral",
+  "writingToneProfessional": "Professional",
+  "writingToneFriendly": "Friendly",
+  "writingToneCasual": "Casual",
+  "writingTopicHint": "What should the draft be about?",
+  "writingActionImprove": "Improve writing",
+  "writingActionFixGrammar": "Fix grammar and spelling",
+  "writingActionProfessional": "Make it professional",
+  "writingActionFriendly": "Make it friendly",
+  "writingActionShorten": "Shorten",
+  "writingActionExpand": "Expand",
+  "writingActionDraftMessage": "Draft a message",
+  "writingActionDraftJobApplication": "Draft a job application email",
+
+  "summarizeTitle": "Summarize",
+  "summarizeInputHint": "Paste the text you want to summarize",
+  "summarizeAction": "Summarize",
+  "summarizeStyle": "Summary style",
+  "summarizeStyleShort": "Short",
+  "summarizeStyleDetailed": "Detailed",
+  "summarizeStyleBullets": "Bullet points",
+  "summarizeOutputLabel": "Summary",
+  "summarizeOutputPlaceholder": "The summary appears here.",
+  "summarizeInputRequired": "Enter some text first.",
+  "summarizeInputTooLong": "This text is too long. Keep it under {limit} characters.",
+  "@summarizeInputTooLong": {
+    "placeholders": {
+      "limit": {"type": "int"}
+    }
+  },
+  "summarizeCounter": "{used} / {limit} characters",
+  "@summarizeCounter": {
+    "placeholders": {
+      "used": {"type": "int"},
+      "limit": {"type": "int"}
+    }
+  },
+
+  "englishTitle": "Learn English",
+  "englishInputHint": "Enter an English word, phrase, or sentence",
+  "englishAction": "Explain in Khmer",
+  "englishOutputLabel": "Explanation",
+  "englishOutputPlaceholder": "A Khmer explanation with examples appears here.",
+  "englishExamplesTitle": "Examples",
+
+  "errorNetwork": "No internet connection. Check your network and try again.",
+  "errorTimeout": "The request took too long. Please try again.",
+  "errorUnauthorized": "Your session is not authorised. Check your access token in Settings.",
+  "errorRateLimited": "Too many requests right now. Please wait a moment and try again.",
+  "errorProvider": "The AI service could not answer this request. Please try again.",
+  "errorInvalidResponse": "The AI service returned an unexpected response.",
+  "errorInputTooLarge": "Your input is too long. Shorten it and try again.",
+  "errorQuotaExceeded": "You have used your free requests for now. Please try again later.",
+  "errorServer": "The service is temporarily unavailable. Please try again later.",
+  "errorUnknown": "Something went wrong. Please try again.",
+  "errorMisconfigured": "The app is not configured with an AI server address.",
+  "errorCancelled": "Request cancelled.",
+  "errorInvalidInput": "Please enter some text first.",
+
+  "actionRetry": "Retry",
+  "actionCopy": "Copy",
+  "actionCopied": "Copied",
+  "actionClear": "Clear",
+  "actionCancel": "Cancel",
+  "actionSave": "Save",
+  "actionDelete": "Delete",
+  "actionClose": "Close",
+  "actionTryAgain": "Try again",
+
+  "settingsTitle": "Settings",
+  "settingsInterfaceLanguage": "Interface language",
+  "settingsLanguageSystem": "System default",
+  "settingsAppearance": "Appearance",
+  "settingsThemeSystem": "System default",
+  "settingsThemeLight": "Light",
+  "settingsThemeDark": "Dark",
+  "settingsUsageTitle": "AI usage",
+  "settingsUsageUnavailable": "This build has no usage data from the server.",
+  "settingsServerMode": "Server mode",
+  "settingsServerLive": "Connected to a real AI server",
+  "settingsServerDemo": "Demo mode (offline sample replies)",
+  "settingsServerMissing": "No AI server configured",
+  "settingsPrivacyTitle": "Privacy",
+  "settingsPrivacyBody": "Conversations are stored on this device only. Text you send is transmitted to the AI server you configured so it can generate a reply. Do not share secrets or sensitive personal data.",
+  "settingsDataTitle": "Data",
+  "settingsClearHistory": "Clear local chat history",
+  "settingsClearHistoryBody": "All conversations stored on this device will be deleted. This cannot be undone.",
+  "settingsAdvancedTitle": "Advanced",
+  "settingsAccessToken": "Access token",
+  "settingsAccessTokenHint": "Optional token sent to your own AI server",
+  "settingsAccessTokenHelp": "Stored in the device secure storage. Leave empty if your server does not require one.",
+  "settingsAccessTokenSaved": "Access token saved",
+  "settingsAccessTokenCleared": "Access token removed",
+  "settingsAboutTitle": "About",
+  "settingsVersion": "Version {version}",
+  "@settingsVersion": {
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+  "settingsClearHistoryDone": "Chat history cleared",
+
+  "offlineBanner": "You are offline. Some features will not work.",
+
+  "a11yQuickAction": "Open {feature}",
+  "@a11yQuickAction": {
+    "placeholders": {
+      "feature": {"type": "String"}
+    }
+  },
+  "a11ySendButton": "Send message",
+  "a11yStopButton": "Stop generating",
+  "a11yCopyButton": "Copy to clipboard",
+  "a11yDeleteConversation": "Delete conversation {title}",
+  "@a11yDeleteConversation": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "a11ySwapLanguages": "Swap source and target languages",
+  "a11yThemeOption": "{theme} theme",
+  "@a11yThemeOption": {
+    "placeholders": {
+      "theme": {"type": "String"}
+    }
+  },
+  "a11yLanguageOption": "{language} interface",
+  "@a11yLanguageOption": {
+    "placeholders": {
+      "language": {"type": "String"}
+    }
+  },
+
+  "featureChat": "Chat",
+  "featureChatSubtitle": "Ask anything, get answers in Khmer",
+  "featureTranslate": "Translate",
+  "featureTranslateSubtitle": "Khmer and English, both directions",
+  "featureWriting": "Writing",
+  "featureWritingSubtitle": "Improve, rewrite, draft messages",
+  "featureSummarize": "Summarize",
+  "featureSummarizeSubtitle": "Turn long text into key points",
+  "featureEnglish": "Learn English",
+  "featureEnglishSubtitle": "English words explained in Khmer"
+}
