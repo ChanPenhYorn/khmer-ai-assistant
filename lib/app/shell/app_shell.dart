@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/utils/context_extensions.dart';
-import 'app_routes.dart';
+import '../router/app_routes.dart';
 
 /// Bottom-navigation shell for the four primary destinations.
 class AppShell extends StatelessWidget {
@@ -16,6 +16,14 @@ class AppShell extends StatelessWidget {
 
     return Scaffold(
       body: navigationShell,
+      floatingActionButton:
+          navigationShell.currentIndex == 0 || navigationShell.currentIndex == 2
+          ? FloatingActionButton.extended(
+              onPressed: () => context.go(AppRoutes.chat),
+              icon: const Icon(Icons.add_comment_outlined),
+              label: Text(l10n.chatNewConversation),
+            )
+          : null,
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: (index) => navigationShell.goBranch(

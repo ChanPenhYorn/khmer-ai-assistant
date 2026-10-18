@@ -17,9 +17,8 @@ enum AiLanguage {
 
   /// Language this enum value resolves to when it is detected locally.
   AiLanguage resolveFrom(String text) => switch (this) {
-    AiLanguage.auto => containsKhmer(text)
-        ? AiLanguage.khmer
-        : AiLanguage.english,
+    AiLanguage.auto =>
+      containsKhmer(text) ? AiLanguage.khmer : AiLanguage.english,
     _ => this,
   };
 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/errors/app_failure.dart';
+import '../../../../core/errors/failure_messages.dart';
 import '../../../../core/utils/id_generator.dart';
 import '../../../ai/domain/entities/ai_stream_event.dart';
 import '../../../settings/presentation/providers/settings_providers.dart';
@@ -18,6 +19,10 @@ part 'chat_controller.g.dart';
 /// Called with [newConversationId] to start a fresh conversation.
 @riverpod
 class ChatController extends _$ChatController {
+  // Cancelled in `ref.onDispose` and by `stop()`/`deleteConversation()`; it is
+  // intentionally not cancelled in `dispose()` because this class is not a
+  // widget.
+  // ignore: cancel_subscriptions
   StreamSubscription<AiStreamEvent>? _subscription;
   bool _initialised = false;
 
@@ -43,12 +48,24 @@ class ChatController extends _$ChatController {
 
   /// Sends [text] as a user turn and streams the assistant answer.
   ///
+  /// Waits for the conversation to finish loading rather than dropping the
+  /// turn, so a prompt handed over from the home screen is never lost.
+  ///
   /// Ignored while a generation is already running, which prevents duplicate
   /// submissions from double taps or keyboard `Enter` repeats.
   Future<void> send(String text) async {
-    final current = state.valueOrNull;
     final trimmed = text.trim();
-    if (current == null || current.isGenerating || trimmed.isEmpty) return;
+    if (trimmed.isEmpty) return;
+
+    final ChatState current;
+    try {
+      current = state.value ?? await future;
+    } catch (_) {
+      // Loading failed; the chat screen already shows the failure and offers
+      // a retry, so there is nothing useful to do here.
+      return;
+    }
+    if (current.isGenerating) return;
 
     final now = DateTime.now();
     final userMessage = ChatMessage(
@@ -69,7 +86,11 @@ class ChatController extends _$ChatController {
       current.copyWith(
         conversation: current.conversation.copyWith(
           updatedAt: now,
-          messages: [...current.conversation.messages, userMessage, placeholder],
+          messages: [
+            ...current.conversation.messages,
+            userMessage,
+            placeholder,
+          ],
         ),
         isGenerating: true,
         failure: null,
@@ -89,7 +110,7 @@ class ChatController extends _$ChatController {
 
   /// Replaces the last assistant answer with a new one.
   Future<void> regenerate() async {
-    final current = state.valueOrNull;
+    final current = state.value;
     if (current == null || current.isGenerating) return;
 
     final history = current.conversation.messages
@@ -126,7 +147,7 @@ class ChatController extends _$ChatController {
 
   /// Retries the turn that failed, dropping the failed answer.
   Future<void> retryLastTurn() async {
-    final current = state.valueOrNull;
+    final current = state.value;
     if (current == null || current.isGenerating) return;
 
     final messages = current.conversation.messages
@@ -166,7 +187,7 @@ class ChatController extends _$ChatController {
 
   /// Stops the in-flight generation, keeping the text received so far.
   Future<void> stop() async {
-    final current = state.valueOrNull;
+    final current = state.value;
     if (current == null || !current.isGenerating) return;
 
     await _cancelSubscription();
@@ -174,7 +195,7 @@ class ChatController extends _$ChatController {
   }
 
   Future<void> rename(String title) async {
-    final current = state.valueOrNull;
+    final current = state.value;
     if (current == null) return;
     final trimmed = title.trim();
     if (trimmed.isEmpty) return;
@@ -192,7 +213,7 @@ class ChatController extends _$ChatController {
 
   /// Deletes this conversation and its stored history.
   Future<void> deleteConversation() async {
-    final current = state.valueOrNull;
+    final current = state.value;
     if (current == null) return;
     await _cancelSubscription();
     await ref
@@ -235,22 +256,20 @@ class ChatController extends _$ChatController {
     }
   }
 
-  void _appendText(
-    String messageId,
-    String text, {
-    bool replaceWith = false,
-  }) {
+  void _appendText(String messageId, String text, {bool replaceWith = false}) {
     if (!_initialised) return;
-    final current = state.valueOrNull;
+    final current = state.value;
     if (current == null) return;
 
-    final messages = current.conversation.messages.map((message) {
-      if (message.id != messageId) return message;
-      final content = replaceWith
-          ? text
-          : (message.content.isEmpty ? text : '${message.content}$text');
-      return message.copyWith(content: content);
-    }).toList(growable: false);
+    final messages = current.conversation.messages
+        .map((message) {
+          if (message.id != messageId) return message;
+          final content = replaceWith
+              ? text
+              : (message.content.isEmpty ? text : '${message.content}$text');
+          return message.copyWith(content: content);
+        })
+        .toList(growable: false);
 
     state = AsyncData(
       current.copyWith(
@@ -260,7 +279,7 @@ class ChatController extends _$ChatController {
   }
 
   void _applyFailure(AppFailure failure, String assistantMessageId) {
-    final current = state.valueOrNull;
+    final current = state.value;
     if (current == null) return;
 
     final messages = current.conversation.messages
@@ -291,7 +310,7 @@ class ChatController extends _$ChatController {
 
   /// Marks the streaming message as finished and stores the conversation.
   void _finishGeneration({bool removeEmptyPlaceholder = false}) {
-    final current = state.valueOrNull;
+    final current = state.value;
     if (current == null) return;
 
     final messages = current.conversation.messages
@@ -320,12 +339,14 @@ class ChatController extends _$ChatController {
     _persist();
   }
 
-  bool _isGenerating() => state.valueOrNull?.isGenerating ?? false;
+  bool _isGenerating() => state.value?.isGenerating ?? false;
 
   Future<void> _persist() async {
-    final current = state.valueOrNull;
+    final current = state.value;
     if (current == null) return;
-    await ref.read(chatRepositoryProvider).saveConversation(current.conversation);
+    await ref
+        .read(chatRepositoryProvider)
+        .saveConversation(current.conversation);
     _refreshHistory();
   }
 

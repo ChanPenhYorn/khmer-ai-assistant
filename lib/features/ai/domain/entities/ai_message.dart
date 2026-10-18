@@ -14,7 +14,8 @@ enum AiRole {
 class AiMessage {
   const AiMessage({required this.role, required this.content});
 
-  const AiMessage.user(String content) : this(role: AiRole.user, content: content);
+  const AiMessage.user(String content)
+    : this(role: AiRole.user, content: content);
 
   const AiMessage.assistant(String content)
     : this(role: AiRole.assistant, content: content);

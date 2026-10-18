@@ -18,8 +18,7 @@ extension AppContextX on BuildContext {
   bool get usesLargeText => MediaQuery.textScalerOf(this).scale(1) > 1.3;
 
   /// Current locale language code, defaulting to Khmer.
-  String get languageCode =>
-      Localizations.localeOf(this).languageCode.isEmpty
+  String get languageCode => Localizations.localeOf(this).languageCode.isEmpty
       ? AppConstants.kmLanguageCode
       : Localizations.localeOf(this).languageCode;
 

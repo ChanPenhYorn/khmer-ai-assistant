@@ -22,10 +22,7 @@ enum AppThemeMode {
 /// User-controlled preferences that are not sensitive.
 @immutable
 class AppSettings {
-  const AppSettings({
-    this.themeMode = AppThemeMode.system,
-    this.localeCode,
-  });
+  const AppSettings({this.themeMode = AppThemeMode.system, this.localeCode});
 
   static const AppSettings defaults = AppSettings();
 

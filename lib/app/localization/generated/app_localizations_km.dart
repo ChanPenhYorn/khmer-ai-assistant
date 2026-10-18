@@ -16,6 +16,13 @@ class AppLocalizationsKm extends AppLocalizations {
       'ជំនួយការសរសេរ និងរៀនភាសា សម្រាប់អ្នកប្រើប្រាស់នៅកម្ពុជា';
 
   @override
+  String get assistantName => 'AI ខ្មែរ';
+
+  @override
+  String get homeSubtitle =>
+      'សួរសំណួរ បកប្រែ សរសេរ ឬរៀន — ទាំងអស់ជាភាសាខ្មែរធម្មជាតិ។';
+
+  @override
   String get navHome => 'ទំព័រដើម';
 
   @override
@@ -63,7 +70,7 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get demoModeBody =>
-      'មិនទាន់បានកំណត់ម៉ាស៊ីន AI ទេ ដូច្នេះចម្លើយមកពីគំរូក្នុងកម្មវិធី។ សូមកំណត់ AI_BASE_URL ដើម្បីភ្ជាប់ទៅអ្នកផ្ដល់សេវា AI ពិតប្រាកដ។';
+      'របៀបសាកល្បងកំពុងបើក ដូច្នេះចម្លើយមកពីគំរូក្នុងកម្មវិធី។ សូមដំណើរការដោយមិនប្រើ --dart-define=AI_USE_MOCK=true ដើម្បីភ្ជាប់ទៅម៉ាស៊ីន AI ពិតប្រាកដ។';
 
   @override
   String quotaRemaining(int count) {
@@ -123,6 +130,9 @@ class AppLocalizationsKm extends AppLocalizations {
 
   @override
   String get chatStreaming => 'កំពុងសរសេរចម្លើយ…';
+
+  @override
+  String get chatScrollToBottom => 'លោតទៅសារចុងក្រោយ';
 
   @override
   String get chatThinking => 'កំពុងគិត…';

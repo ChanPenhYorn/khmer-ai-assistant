@@ -93,7 +93,10 @@ class AiRepositoryImpl implements AiRepository {
       task: AiTask.summarize,
       locale: outputLanguage.code,
       input: text.trim(),
-      params: {'style': style.wireValue, 'target_language': outputLanguage.code},
+      params: {
+        'style': style.wireValue,
+        'target_language': outputLanguage.code,
+      },
     ),
   );
 

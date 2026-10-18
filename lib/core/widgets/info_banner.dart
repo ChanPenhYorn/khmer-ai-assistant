@@ -30,8 +30,14 @@ class InfoBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final (background, foreground) = switch (tone) {
-      InfoBannerTone.info => (colors.secondaryContainer, colors.onSecondaryContainer),
-      InfoBannerTone.warning => (colors.errorContainer, colors.onErrorContainer),
+      InfoBannerTone.info => (
+        colors.secondaryContainer,
+        colors.onSecondaryContainer,
+      ),
+      InfoBannerTone.warning => (
+        colors.errorContainer,
+        colors.onErrorContainer,
+      ),
     };
 
     return Semantics(
@@ -41,7 +47,8 @@ class InfoBanner extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: background,
-          borderRadius: BorderRadius.circular(AppConstants.radiusSm),
+          borderRadius: BorderRadius.circular(AppConstants.radiusMd),
+          border: Border(left: BorderSide(color: foreground, width: 4)),
         ),
         padding: const EdgeInsets.all(AppConstants.spaceMd),
         child: Row(
@@ -55,7 +62,9 @@ class InfoBanner extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: context.texts.titleSmall?.copyWith(color: foreground),
+                    style: context.texts.titleSmall?.copyWith(
+                      color: foreground,
+                    ),
                   ),
                   const SizedBox(height: AppConstants.spaceXs),
                   Text(

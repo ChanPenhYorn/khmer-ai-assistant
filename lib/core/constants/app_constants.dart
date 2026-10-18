@@ -15,9 +15,16 @@ class AppConstants {
   static const double radiusSm = 10;
   static const double radiusMd = 16;
   static const double radiusLg = 24;
+  static const double radiusXl = 28;
 
   /// Minimum tap target, aligned with Material accessibility guidance.
   static const double minTapTarget = 48;
+
+  /// Motion durations kept short so interactions feel responsive without
+  /// becoming decorative.
+  static const Duration motionFast = Duration(milliseconds: 120);
+  static const Duration motionNormal = Duration(milliseconds: 200);
+  static const Duration motionSlow = Duration(milliseconds: 320);
 
   /// Line height used for Khmer text. Khmer needs more vertical room than
   /// Latin scripts to avoid clipping joined glyphs.

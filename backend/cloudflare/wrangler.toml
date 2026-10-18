@@ -1,0 +1,32 @@
+# Cloudflare Worker — Khmer AI Assistant AI proxy.
+#
+# Primary backend. Calls a model through the Workers AI binding, so there is
+# no provider API key to store. See README.md.
+
+name = "khmer-ai-assistant"
+main = "src/index.ts"
+compatibility_date = "2025-08-01"
+workers_dev = true
+
+# Workers AI binding (no key needed). Requires Workers AI enabled on the
+# account, which the deployed OAuth token already permits.
+[ai]
+binding = "AI"
+
+# Custom domain. The zone (chanpenh.store) must be in this Cloudflare account.
+[[routes]]
+pattern = "api.chanpenh.store"
+custom_domain = true
+
+[vars]
+# Route calls through the Workers AI binding instead of an HTTP endpoint.
+AI_WORKERS_AI = "true"
+# Khmer-capable SEA-LION model hosted on Workers AI (pricing: see docs/ai).
+AI_CHAT_MODEL = "@cf/aisingapore/gemma-sea-lion-v4-27b-it"
+# Optional dedicated translation model. Uncomment to split translation out.
+# AI_TRANSLATION_MODEL = "@cf/aisingapore/gemma-sea-lion-v4-27b-it"
+AI_MAX_INPUT_CHARS = "6000"
+AI_MAX_OUTPUT_TOKENS = "1024"
+AI_REQUEST_TIMEOUT_MS = "45000"
+# Comma-separated CORS allow-list. Empty = "*". Set to your app origin in prod.
+AI_ALLOWED_ORIGINS = ""

@@ -1,6 +1,6 @@
 import '../../domain/entities/ai_reply.dart';
 import '../../domain/entities/ai_stream_event.dart';
-import 'dto/ai_request_dto.dart';
+import '../dto/ai_request_dto.dart';
 
 /// Transport contract for the AI backend.
 ///

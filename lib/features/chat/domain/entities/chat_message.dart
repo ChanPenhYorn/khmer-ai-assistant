@@ -31,13 +31,14 @@ class ChatMessage {
   });
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
-    final author = json['author'] == 'user' ? ChatAuthor.user : ChatAuthor.assistant;
+    final author = json['author'] == 'user'
+        ? ChatAuthor.user
+        : ChatAuthor.assistant;
     return ChatMessage(
       id: json['id'] as String? ?? '',
       author: author,
       content: json['content'] as String? ?? '',
       createdAt: _parseDate(json['created_at']),
-      status: ChatMessageStatus.complete,
     );
   }
 
@@ -55,16 +56,14 @@ class ChatMessage {
 
   bool get isEmpty => content.trim().isEmpty;
 
-  ChatMessage copyWith({
-    String? content,
-    ChatMessageStatus? status,
-  }) => ChatMessage(
-    id: id,
-    author: author,
-    content: content ?? this.content,
-    createdAt: createdAt,
-    status: status ?? this.status,
-  );
+  ChatMessage copyWith({String? content, ChatMessageStatus? status}) =>
+      ChatMessage(
+        id: id,
+        author: author,
+        content: content ?? this.content,
+        createdAt: createdAt,
+        status: status ?? this.status,
+      );
 
   /// Wire format for local persistence. [status] is intentionally not stored:
   /// a reloaded conversation only contains finished messages.

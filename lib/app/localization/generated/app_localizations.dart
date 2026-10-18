@@ -110,6 +110,18 @@ abstract class AppLocalizations {
   /// **'Your Khmer-first writing and learning helper'**
   String get appTagline;
 
+  /// No description provided for @assistantName.
+  ///
+  /// In en, this message translates to:
+  /// **'Khmer AI'**
+  String get assistantName;
+
+  /// No description provided for @homeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a question, translate, write or learn — all in natural Khmer.'**
+  String get homeSubtitle;
+
   /// No description provided for @navHome.
   ///
   /// In en, this message translates to:
@@ -203,7 +215,7 @@ abstract class AppLocalizations {
   /// No description provided for @demoModeBody.
   ///
   /// In en, this message translates to:
-  /// **'No AI server is configured, so replies come from a built-in offline sample. Set the AI_BASE_URL build option to connect a real provider.'**
+  /// **'Sample mode is switched on, so replies come from a built-in offline sample. Run without --dart-define=AI_USE_MOCK=true to connect to the real AI server.'**
   String get demoModeBody;
 
   /// No description provided for @quotaRemaining.
@@ -301,6 +313,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Writing a reply…'**
   String get chatStreaming;
+
+  /// No description provided for @chatScrollToBottom.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump to latest'**
+  String get chatScrollToBottom;
 
   /// No description provided for @chatThinking.
   ///

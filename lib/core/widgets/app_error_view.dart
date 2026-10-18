@@ -37,7 +37,7 @@ class AppErrorView extends StatelessWidget {
         padding: const EdgeInsets.all(AppConstants.spaceMd),
         decoration: BoxDecoration(
           color: colors.errorContainer,
-          borderRadius: BorderRadius.circular(AppConstants.radiusSm),
+          borderRadius: BorderRadius.circular(AppConstants.radiusMd),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,10 +72,18 @@ class AppErrorView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.cloud_off_outlined,
-                  size: 44,
-                  color: colors.onSurfaceVariant,
+                Container(
+                  height: 76,
+                  width: 76,
+                  decoration: BoxDecoration(
+                    color: colors.errorContainer,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.cloud_off_outlined,
+                    size: 34,
+                    color: colors.onErrorContainer,
+                  ),
                 ),
                 const SizedBox(height: AppConstants.spaceMd),
                 Text(

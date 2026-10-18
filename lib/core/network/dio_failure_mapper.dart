@@ -32,6 +32,7 @@ AppFailure mapDioException(DioException error) {
     case DioExceptionType.connectionTimeout:
     case DioExceptionType.sendTimeout:
     case DioExceptionType.receiveTimeout:
+    case DioExceptionType.transformTimeout:
       return TimeoutFailure(technicalMessage: detail, cause: error);
     case DioExceptionType.connectionError:
     case DioExceptionType.badCertificate:
@@ -152,6 +153,8 @@ Map<String, dynamic>? _asStringMap(Object? data) {
 /// Debug-only logging helper that never prints tokens or conversation content.
 void logFailureInDebug(AppFailure failure) {
   if (kDebugMode) {
-    debugPrint('[ai] ${failure.kind.name} :: ${failure.technicalMessage ?? '-'}');
+    debugPrint(
+      '[ai] ${failure.kind.name} :: ${failure.technicalMessage ?? '-'}',
+    );
   }
 }

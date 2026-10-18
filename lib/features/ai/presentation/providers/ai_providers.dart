@@ -6,6 +6,7 @@ import '../../../../core/network/dio_providers.dart';
 import '../../data/datasources/ai_mock_data_source.dart';
 import '../../data/datasources/ai_remote_data_source.dart';
 import '../../data/repositories/ai_repository_impl.dart';
+import '../../data/repositories/usage_recording_ai_repository.dart';
 import '../../domain/entities/ai_reply.dart';
 import '../../domain/entities/ai_stream_event.dart';
 import '../../domain/repositories/ai_repository.dart';
@@ -16,6 +17,7 @@ import '../../domain/usecases/summarize_text.dart';
 import '../../domain/usecases/translate_text.dart';
 import '../../data/datasources/ai_data_source.dart';
 import '../../data/dto/ai_request_dto.dart';
+import 'ai_usage_provider.dart';
 
 part 'ai_providers.g.dart';
 
@@ -33,8 +35,11 @@ AiDataSource aiDataSource(Ref ref) {
 }
 
 @Riverpod(keepAlive: true)
-AiRepository aiRepository(Ref ref) =>
-    AiRepositoryImpl(dataSource: ref.watch(aiDataSourceProvider));
+AiRepository aiRepository(Ref ref) => UsageRecordingAiRepository(
+  delegate: AiRepositoryImpl(dataSource: ref.watch(aiDataSourceProvider)),
+  onUsage: (usage) =>
+      ref.read(aiUsageControllerProvider.notifier).record(usage),
+);
 
 @Riverpod(keepAlive: true)
 SendMessage sendMessage(Ref ref) => SendMessage(
@@ -79,7 +84,5 @@ class _MisconfiguredAiDataSource implements AiDataSource {
 
   @override
   Stream<AiStreamEvent> stream(AiRequestDto request) =>
-      Stream<AiStreamEvent>.value(
-        const AiStreamFailed(MisconfiguredFailure()),
-      );
+      Stream<AiStreamEvent>.value(const AiStreamFailed(MisconfiguredFailure()));
 }

@@ -4,6 +4,9 @@ import '../../core/constants/app_constants.dart';
 import '../../core/utils/context_extensions.dart';
 
 /// Section title with an optional trailing action.
+///
+/// A short accent bar keeps the title anchored without adding a second
+/// heading level or colour noise.
 class SectionHeader extends StatelessWidget {
   const SectionHeader({
     super.key,
@@ -21,14 +24,22 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: padding,
       child: Row(
         children: [
-          Expanded(
-            child: Text(title, style: context.texts.titleMedium),
+          Container(
+            width: 4,
+            height: 18,
+            decoration: BoxDecoration(
+              color: colors.primary,
+              borderRadius: BorderRadius.circular(2),
+            ),
           ),
-          if (action != null) action!,
+          const SizedBox(width: AppConstants.spaceSm),
+          Expanded(child: Text(title, style: context.texts.titleMedium)),
+          ?action,
         ],
       ),
     );

@@ -106,14 +106,20 @@ final class TimeoutFailure extends AppFailure {
 
 /// The backend rejected the caller's credentials.
 final class UnauthorizedFailure extends AppFailure {
-  const UnauthorizedFailure({super.technicalMessage, super.statusCode, super.cause})
-    : super(kind: FailureKind.unauthorized);
+  const UnauthorizedFailure({
+    super.technicalMessage,
+    super.statusCode,
+    super.cause,
+  }) : super(kind: FailureKind.unauthorized);
 }
 
 /// The caller is sending requests too quickly.
 final class RateLimitedFailure extends AppFailure {
-  const RateLimitedFailure({super.technicalMessage, super.statusCode, super.cause})
-    : super(kind: FailureKind.rateLimited);
+  const RateLimitedFailure({
+    super.technicalMessage,
+    super.statusCode,
+    super.cause,
+  }) : super(kind: FailureKind.rateLimited);
 }
 
 /// The AI provider could not fulfil the request.
@@ -124,8 +130,11 @@ final class ProviderFailure extends AppFailure {
 
 /// The response body was missing or malformed.
 final class InvalidResponseFailure extends AppFailure {
-  const InvalidResponseFailure({super.technicalMessage, super.statusCode, super.cause})
-    : super(kind: FailureKind.invalidResponse);
+  const InvalidResponseFailure({
+    super.technicalMessage,
+    super.statusCode,
+    super.cause,
+  }) : super(kind: FailureKind.invalidResponse);
 }
 
 /// The input exceeds the configured size limit.
@@ -136,8 +145,11 @@ final class InputTooLargeFailure extends AppFailure {
 
 /// The user ran out of server-side allowance.
 final class QuotaExceededFailure extends AppFailure {
-  const QuotaExceededFailure({super.technicalMessage, super.statusCode, super.cause})
-    : super(kind: FailureKind.quotaExceeded);
+  const QuotaExceededFailure({
+    super.technicalMessage,
+    super.statusCode,
+    super.cause,
+  }) : super(kind: FailureKind.quotaExceeded);
 }
 
 /// The backend reported an unexpected error.

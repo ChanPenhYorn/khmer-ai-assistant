@@ -69,8 +69,12 @@ class AppTextField extends StatelessWidget {
       // fights with a Material counter.
       buildCounter: showCounter && maxLength != null
           ? null
-          : (context, {required currentLength, required isFocused, maxLength}) =>
-                null,
+          : (
+              context, {
+              required currentLength,
+              required isFocused,
+              maxLength,
+            }) => null,
       decoration: InputDecoration(
         labelText: label,
         hintText: hintText,

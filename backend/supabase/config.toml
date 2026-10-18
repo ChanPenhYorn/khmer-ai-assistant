@@ -1,0 +1,13 @@
+# Supabase project configuration for the Khmer AI Assistant backend.
+#
+# The project ref is public (it appears in the client URL), not a secret.
+# Provider keys and the Supabase secret key live in `supabase secrets`, never
+# in this file.
+
+project_id = "khmer_ai_assistant"
+
+[functions.assistant]
+# The JWT is verified inside the function (see auth.ts) so the same code can
+# also accept the optional shared client token during local development.
+# Keep this false unless that logic is moved into the platform gateway.
+verify_jwt = false

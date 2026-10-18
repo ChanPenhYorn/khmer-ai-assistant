@@ -1,7 +1,6 @@
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/id_generator.dart';
 import '../../../../core/utils/text_utils.dart';
-import '../../domain/entities/chat_message.dart';
 import '../../domain/entities/conversation.dart';
 import '../../domain/repositories/chat_repository.dart';
 import '../datasources/chat_local_data_source.dart';
@@ -65,15 +64,20 @@ class ChatRepositoryImpl implements ChatRepository {
         : conversation;
 
     final index = stored.indexWhere((c) => c.id == bounded.id);
-    final withTitle = _normalizeTitle(
-      bounded.title,
-      fallback: _autoTitle(bounded),
-      existing: bounded,
+    final updated = bounded.copyWith(
+      title: _normalizeTitle(
+        bounded.title,
+        fallback: _autoTitle(bounded),
+        existing: bounded,
+      ),
+      updatedAt: bounded.updatedAt == conversation.updatedAt
+          ? _clock()
+          : bounded.updatedAt,
     );
     if (index == -1) {
-      stored.insert(0, withTitle);
+      stored.insert(0, updated);
     } else {
-      stored[index] = withTitle;
+      stored[index] = updated;
     }
     await _writeConversations(stored);
   }
@@ -150,6 +154,9 @@ class ChatRepositoryImpl implements ChatRepository {
       if (!message.isUser) continue;
       final title = TextUtils.titleFromMessage(
         message.content,
+        // Passed explicitly so the title length stays tied to the shared
+        // constant even if the utility's default changes.
+        // ignore: avoid_redundant_argument_values
         maxLength: AppConstants.autoTitleLength,
       );
       if (title.isNotEmpty) return title;

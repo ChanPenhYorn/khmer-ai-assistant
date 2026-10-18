@@ -22,6 +22,12 @@ abstract final class AppTheme {
       scaffoldBackgroundColor: colors.surface,
       splashFactory: InkSparkle.splashFactory,
       visualDensity: VisualDensity.standard,
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
       appBarTheme: AppBarTheme(
         centerTitle: false,
         elevation: 0,
@@ -30,19 +36,25 @@ abstract final class AppTheme {
         surfaceTintColor: Colors.transparent,
         foregroundColor: colors.onSurface,
         titleTextStyle: textTheme.titleLarge,
+        shape: Border(
+          bottom: BorderSide(
+            color: colors.outlineVariant.withValues(alpha: 0.5),
+          ),
+        ),
       ),
       cardTheme: CardThemeData(
         elevation: 0,
         margin: EdgeInsets.zero,
         color: colors.surfaceContainerLow,
         surfaceTintColor: Colors.transparent,
+        clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusMd),
+          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
           side: BorderSide(color: colors.outlineVariant.withValues(alpha: 0.6)),
         ),
       ),
       dividerTheme: DividerThemeData(
-        color: colors.outlineVariant.withValues(alpha: 0.5),
+        color: colors.outlineVariant.withValues(alpha: 0.6),
         space: 1,
         thickness: 1,
       ),
@@ -54,7 +66,7 @@ abstract final class AppTheme {
             vertical: AppConstants.spaceSm,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.radiusSm),
+            borderRadius: BorderRadius.circular(AppConstants.radiusMd),
           ),
           textStyle: textTheme.labelLarge,
         ),
@@ -67,8 +79,9 @@ abstract final class AppTheme {
             vertical: AppConstants.spaceSm,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.radiusSm),
+            borderRadius: BorderRadius.circular(AppConstants.radiusMd),
           ),
+          side: BorderSide(color: colors.outline),
           textStyle: textTheme.labelLarge,
         ),
       ),
@@ -79,6 +92,9 @@ abstract final class AppTheme {
             horizontal: AppConstants.spaceMd,
             vertical: AppConstants.spaceSm,
           ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppConstants.radiusSm),
+          ),
           textStyle: textTheme.labelLarge,
         ),
       ),
@@ -87,6 +103,9 @@ abstract final class AppTheme {
           minimumSize: const Size(
             AppConstants.minTapTarget,
             AppConstants.minTapTarget,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppConstants.radiusSm),
           ),
         ),
       ),
@@ -101,19 +120,25 @@ abstract final class AppTheme {
         ),
         border: _inputBorder(colors.outlineVariant),
         enabledBorder: _inputBorder(colors.outlineVariant),
-        focusedBorder: _inputBorder(colors.primary, width: 1.6),
+        focusedBorder: _inputBorder(colors.primary, width: 1.8),
         errorBorder: _inputBorder(colors.error),
-        focusedErrorBorder: _inputBorder(colors.error, width: 1.6),
+        focusedErrorBorder: _inputBorder(colors.error, width: 1.8),
         hintStyle: textTheme.bodyLarge?.copyWith(
+          color: colors.onSurfaceVariant,
+        ),
+        labelStyle: textTheme.bodyLarge?.copyWith(
           color: colors.onSurfaceVariant,
         ),
       ),
       chipTheme: ChipThemeData(
         side: BorderSide(color: colors.outlineVariant),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusSm),
+          borderRadius: BorderRadius.circular(AppConstants.radiusMd),
         ),
         labelStyle: textTheme.labelMedium,
+        selectedColor: colors.secondaryContainer,
+        checkmarkColor: colors.onSecondaryContainer,
+        backgroundColor: colors.surfaceContainerLow,
         padding: const EdgeInsets.symmetric(
           horizontal: AppConstants.spaceSm,
           vertical: AppConstants.spaceXs,
@@ -126,16 +151,17 @@ abstract final class AppTheme {
           color: colors.onSurfaceVariant,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusSm),
+          borderRadius: BorderRadius.circular(AppConstants.radiusMd),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
+        closeIconColor: colors.onInverseSurface,
         contentTextStyle: textTheme.bodyMedium?.copyWith(
           color: colors.onInverseSurface,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusSm),
+          borderRadius: BorderRadius.circular(AppConstants.radiusMd),
         ),
       ),
       bottomSheetTheme: const BottomSheetThemeData(
@@ -143,22 +169,37 @@ abstract final class AppTheme {
         clipBehavior: Clip.antiAlias,
       ),
       dialogTheme: DialogThemeData(
+        backgroundColor: colors.surfaceContainerLow,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppConstants.radiusMd),
+          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        height: 68,
+        height: 72,
         elevation: 0,
         backgroundColor: colors.surfaceContainerLow,
-        labelTextStyle: WidgetStatePropertyAll(textTheme.labelMedium),
-        indicatorColor: colors.secondaryContainer,
+        indicatorColor: colors.primaryContainer,
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+        ),
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? textTheme.labelMedium?.copyWith(
+                  color: colors.onPrimaryContainer,
+                  fontWeight: FontWeight.w700,
+                )
+              : textTheme.labelMedium?.copyWith(color: colors.onSurfaceVariant),
+        ),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: colors.primary,
         linearMinHeight: 3,
       ),
       tooltipTheme: TooltipThemeData(
+        decoration: BoxDecoration(
+          color: colors.inverseSurface,
+          borderRadius: BorderRadius.circular(AppConstants.radiusSm),
+        ),
         textStyle: textTheme.bodySmall?.copyWith(
           color: colors.onInverseSurface,
         ),
@@ -169,7 +210,7 @@ abstract final class AppTheme {
 
   static OutlineInputBorder _inputBorder(Color color, {double width = 1}) =>
       OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppConstants.radiusSm),
+        borderRadius: BorderRadius.circular(AppConstants.radiusMd),
         borderSide: BorderSide(color: color, width: width),
       );
 }

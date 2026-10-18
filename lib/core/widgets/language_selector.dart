@@ -103,6 +103,9 @@ class OptionChips<T> extends StatelessWidget {
             for (final option in options)
               ChoiceChip(
                 label: Text(labelOf(context, option)),
+                labelPadding: const EdgeInsets.symmetric(
+                  horizontal: AppConstants.spaceXs,
+                ),
                 selected: option == selected,
                 onSelected: (_) => onSelected(option),
               ),

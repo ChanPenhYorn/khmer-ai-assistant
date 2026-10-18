@@ -37,9 +37,7 @@ class SettingsController extends _$SettingsController {
 /// product is Khmer-first.
 @Riverpod(keepAlive: true)
 Locale appLocale(Ref ref) {
-  final preferred = ref.watch(
-    settingsControllerProvider.select((settings) => settings.localeCode),
-  );
+  final preferred = ref.watch(settingsControllerProvider).localeCode;
   if (preferred != null) return Locale(preferred);
 
   final systemLocales = WidgetsBinding.instance.platformDispatcher.locales;
@@ -55,9 +53,10 @@ Locale appLocale(Ref ref) {
 
 /// Language code sent with AI requests so answers match the interface.
 @Riverpod(keepAlive: true)
-String contentLanguageCode(Ref ref) => ref.watch(appLocaleProvider).languageCode;
+String contentLanguageCode(Ref ref) =>
+    ref.watch(appLocaleProvider).languageCode;
 
 /// Appearance preference resolved for `MaterialApp`.
 @Riverpod(keepAlive: true)
 AppThemeMode appThemeMode(Ref ref) =>
-    ref.watch(settingsControllerProvider.select((settings) => settings.themeMode));
+    ref.watch(settingsControllerProvider).themeMode;

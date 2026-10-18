@@ -37,7 +37,9 @@ abstract final class TextUtils {
     // boundary is preferred, a hard cut is the fallback.
     final slice = normalized.substring(0, maxLength);
     final lastSpace = slice.lastIndexOf(' ');
-    final cut = lastSpace >= maxLength ~/ 2 ? slice.substring(0, lastSpace) : slice;
+    final cut = lastSpace >= maxLength ~/ 2
+        ? slice.substring(0, lastSpace)
+        : slice;
     return '$cut…';
   }
 

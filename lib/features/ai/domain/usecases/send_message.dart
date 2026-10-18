@@ -24,7 +24,9 @@ class SendMessage {
   }) {
     if (conversation.isEmpty) {
       return Stream.value(
-        const AiStreamFailed(InvalidInputFailure(technicalMessage: 'no messages')),
+        const AiStreamFailed(
+          InvalidInputFailure(technicalMessage: 'no messages'),
+        ),
       );
     }
 
@@ -52,6 +54,9 @@ class SendMessage {
       );
     }
 
-    return _repository.streamMessage(conversation: conversation, locale: locale);
+    return _repository.streamMessage(
+      conversation: conversation,
+      locale: locale,
+    );
   }
 }

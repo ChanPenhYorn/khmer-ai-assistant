@@ -12,6 +12,7 @@ import '../../domain/entities/ai_stream_event.dart';
 import '../dto/ai_request_dto.dart';
 import '../dto/ai_response_dto.dart';
 import 'ai_data_source.dart';
+import 'sse_parser.dart';
 
 /// Talks to the operator's AI proxy over HTTPS.
 ///
@@ -96,9 +97,9 @@ class RemoteAiDataSource implements AiDataSource {
     StreamController<AiStreamEvent> controller,
     CancelToken cancelToken,
   ) async {
-    final buffer = StringBuffer();
     final partial = StringBuffer();
     var completed = false;
+    final parser = AiSseParser();
 
     try {
       final response = await _dio.postUri<ResponseBody>(
@@ -125,14 +126,14 @@ class RemoteAiDataSource implements AiDataSource {
               .transform(const Utf8Decoder(allowMalformed: true))
               .transform(const LineSplitter())) {
         if (controller.isClosed) return;
-        final payload = _readSseData(line, buffer);
+        final payload = parser.readDataLine(line);
         if (payload == null) continue;
         if (payload == '[DONE]') {
           completed = true;
           break;
         }
 
-        final event = _parseSsePayload(payload);
+        final event = parser.parsePayload(payload);
         if (event == null) continue;
 
         if (event is AiStreamDelta) {
@@ -163,9 +164,7 @@ class RemoteAiDataSource implements AiDataSource {
             ),
           );
         } else {
-          controller.add(
-            AiStreamCompleted(AiReply(text: text)),
-          );
+          controller.add(AiStreamCompleted(AiReply(text: text)));
         }
       }
     } on DioException catch (error) {
@@ -188,64 +187,6 @@ class RemoteAiDataSource implements AiDataSource {
       if (!controller.isClosed) await controller.close();
     }
   }
-
-  /// Extracts the JSON payload of one SSE `data:` line, ignoring comments,
-  /// blank lines and other SSE fields.
-  String? _readSseData(String line, StringBuffer buffer) {
-    if (line.isEmpty) return null;
-    if (line.startsWith(':')) return null; // SSE comment / keep-alive
-    if (!line.startsWith('data:')) return null;
-    final value = line.substring(5).trim();
-    if (value.isEmpty) return null;
-    // Multi-line data fields are concatenated per the SSE specification.
-    if (buffer.isNotEmpty) buffer.write('\n');
-    buffer.write(value);
-    final payload = buffer.toString();
-    buffer.clear();
-    return payload;
-  }
-
-  AiStreamEvent? _parseSsePayload(String payload) {
-    final Object? decoded;
-    try {
-      decoded = jsonDecode(payload);
-    } on FormatException {
-      return null; // ignore frames we cannot read
-    }
-    if (decoded is! Map) return null;
-    final map = decoded.cast<String, dynamic>();
-
-    // Mid-stream error frame: {"error": {"code": "…", "message": "…"}}
-    if (map['error'] != null) {
-      final code = map['error'] is Map
-          ? (map['error'] as Map)['code']?.toString()
-          : map['error'].toString();
-      return AiStreamFailed(_failureFromCode(code));
-    }
-
-    final delta = map['delta'] ?? map['text'];
-    if (delta is String) return AiStreamDelta(delta);
-
-    // Some backends send the final envelope on the last frame.
-    if (map.containsKey('usage') || map.containsKey('model')) {
-      try {
-        return AiStreamCompleted(AiResponseDto.parse(map));
-      } on AppFailure {
-        return null;
-      }
-    }
-    return null;
-  }
-
-  AppFailure _failureFromCode(String? code) => switch (code) {
-    ServerErrorCode.unauthorized => const UnauthorizedFailure(),
-    ServerErrorCode.rateLimited => const RateLimitedFailure(),
-    ServerErrorCode.quotaExceeded => const QuotaExceededFailure(),
-    ServerErrorCode.inputTooLarge => const InputTooLargeFailure(),
-    ServerErrorCode.invalidRequest => const InvalidInputFailure(),
-    ServerErrorCode.serverError => const ServerFailure(),
-    _ => const ProviderFailure(),
-  };
 
   Uri _requireUri() {
     final uri = _config.assistantUri;

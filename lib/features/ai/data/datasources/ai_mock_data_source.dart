@@ -55,9 +55,7 @@ class MockAiDataSource implements AiDataSource {
     final isKhmer = request.locale == AppConstants.kmLanguageCode;
     final preview = _preview(
       request.task == AiTask.chat
-          ? (request.messages.isEmpty
-                ? ''
-                : request.messages.last.content)
+          ? (request.messages.isEmpty ? '' : request.messages.last.content)
           : (request.input ?? ''),
     );
 

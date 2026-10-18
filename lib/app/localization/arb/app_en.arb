@@ -2,6 +2,8 @@
   "@@locale": "en",
   "appTitle": "Khmer AI Assistant",
   "appTagline": "Your Khmer-first writing and learning helper",
+  "assistantName": "Khmer AI",
+  "homeSubtitle": "Ask a question, translate, write or learn — all in natural Khmer.",
 
   "navHome": "Home",
   "navChat": "Chat",
@@ -20,7 +22,7 @@
   "homeSuggestion4": "Summarize this text in three bullet points",
 
   "demoModeTitle": "Demo mode",
-  "demoModeBody": "No AI server is configured, so replies come from a built-in offline sample. Set the AI_BASE_URL build option to connect a real provider.",
+  "demoModeBody": "Sample mode is switched on, so replies come from a built-in offline sample. Run without --dart-define=AI_USE_MOCK=true to connect to the real AI server.",
 
   "quotaRemaining": "{count, plural, =0{No free requests left today} =1{1 free request left today} other{{count} free requests left today}}",
   "@quotaRemaining": {
@@ -44,6 +46,7 @@
   "chatEmptySuggestion2": "Help me write a message to my landlord",
   "chatEmptySuggestion3": "How do I prepare for a job interview?",
   "chatStreaming": "Writing a reply…",
+  "chatScrollToBottom": "Jump to latest",
   "chatThinking": "Thinking…",
   "chatUntitled": "New conversation",
   "chatRenameTitle": "Rename conversation",

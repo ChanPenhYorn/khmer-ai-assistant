@@ -28,26 +28,23 @@ class FeatureCard extends StatelessWidget {
       button: true,
       label: semanticLabel ?? '$title. $subtitle',
       child: Card(
-        clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
+          hoverColor: colors.surfaceContainerHigh,
+          focusColor: colors.surfaceContainerHigh,
           child: Padding(
             padding: const EdgeInsets.all(AppConstants.spaceMd),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: 40,
-                  width: 40,
+                  height: 44,
+                  width: 44,
                   decoration: BoxDecoration(
-                    color: colors.secondaryContainer,
-                    borderRadius: BorderRadius.circular(AppConstants.radiusSm),
+                    color: colors.primaryContainer,
+                    borderRadius: BorderRadius.circular(AppConstants.radiusMd),
                   ),
-                  child: Icon(
-                    icon,
-                    size: 22,
-                    color: colors.onSecondaryContainer,
-                  ),
+                  child: Icon(icon, size: 23, color: colors.onPrimaryContainer),
                 ),
                 const SizedBox(width: AppConstants.spaceMd),
                 Expanded(
@@ -66,15 +63,20 @@ class FeatureCard extends StatelessWidget {
                         style: context.texts.bodySmall?.copyWith(
                           color: colors.onSurfaceVariant,
                         ),
-                        maxLines: 3,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
-                Icon(
-                  Icons.chevron_right,
-                  color: colors.onSurfaceVariant,
-                  size: 20,
+                const SizedBox(width: AppConstants.spaceXs),
+                Padding(
+                  padding: const EdgeInsets.only(top: AppConstants.spaceXs),
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: colors.onSurfaceVariant,
+                    size: 20,
+                  ),
                 ),
               ],
             ),

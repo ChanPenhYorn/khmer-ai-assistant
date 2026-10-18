@@ -21,10 +21,7 @@ class SendChatMessage {
     required List<ChatMessage> history,
     required String locale,
   }) {
-    return _sendMessage(
-      conversation: _toContext(history),
-      locale: locale,
-    );
+    return _sendMessage(conversation: _toContext(history), locale: locale);
   }
 
   /// Exposed for tests: builds the exact message list that is transmitted.
@@ -40,7 +37,9 @@ class SendChatMessage {
     final window = usable.sublist(usable.length - maxHistoryMessages);
     // A context window must start with a user turn.
     final firstUserIndex = window.indexWhere((m) => m.isUser);
-    final trimmed = firstUserIndex <= 0 ? window : window.sublist(firstUserIndex);
+    final trimmed = firstUserIndex <= 0
+        ? window
+        : window.sublist(firstUserIndex);
     return trimmed.map((m) => m.toAiMessage()).toList(growable: false);
   }
 }

@@ -43,3 +43,19 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Secrets and generated outputs — never commit these
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+eval/results/
+# Cloudflare Worker local state and dev secrets
+.wrangler/
+backend/cloudflare/.wrangler/
+.dev.vars
+.dev.vars.*
+backend/cloudflare/.dev.vars
+node_modules/

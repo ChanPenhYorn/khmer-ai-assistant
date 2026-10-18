@@ -15,6 +15,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTagline => 'Your Khmer-first writing and learning helper';
 
   @override
+  String get assistantName => 'Khmer AI';
+
+  @override
+  String get homeSubtitle =>
+      'Ask a question, translate, write or learn — all in natural Khmer.';
+
+  @override
   String get navHome => 'Home';
 
   @override
@@ -62,7 +69,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoModeBody =>
-      'No AI server is configured, so replies come from a built-in offline sample. Set the AI_BASE_URL build option to connect a real provider.';
+      'Sample mode is switched on, so replies come from a built-in offline sample. Run without --dart-define=AI_USE_MOCK=true to connect to the real AI server.';
 
   @override
   String quotaRemaining(int count) {
@@ -121,6 +128,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatStreaming => 'Writing a reply…';
+
+  @override
+  String get chatScrollToBottom => 'Jump to latest';
 
   @override
   String get chatThinking => 'Thinking…';

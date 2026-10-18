@@ -36,9 +36,7 @@ class MarkdownText extends StatelessWidget {
       ),
       blockquoteDecoration: BoxDecoration(
         color: colors.surfaceContainerLow,
-        border: Border(
-          left: BorderSide(color: colors.primary, width: 3),
-        ),
+        border: Border(left: BorderSide(color: colors.primary, width: 3)),
       ),
       a: texts.bodyLarge?.copyWith(
         color: colors.primary,
@@ -56,10 +54,8 @@ class MarkdownText extends StatelessWidget {
         if (href == null) return;
         openExternalLink(context, href);
       },
-      imageBuilder: (uri, title, alt) => Text(
-        alt ?? uri.toString(),
-        style: texts.bodySmall,
-      ),
+      imageBuilder: (uri, title, alt) =>
+          Text(alt ?? uri.toString(), style: texts.bodySmall),
     );
   }
 }

@@ -1,4 +1,3 @@
-import '../../../../core/errors/app_failure.dart';
 import '../../../../core/utils/input_validator.dart';
 import '../entities/ai_language.dart';
 import '../entities/ai_reply.dart';

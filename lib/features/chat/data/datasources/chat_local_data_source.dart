@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 /// Raw storage contract for conversations.
 ///
 /// Kept as untyped maps so the storage format (currently a JSON document in

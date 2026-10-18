@@ -61,8 +61,7 @@ GoRouter createRouter({String initialLocation = AppRoutes.home}) {
             routes: [
               GoRoute(
                 path: AppRoutes.history,
-                builder: (context, state) =>
-                    const ConversationHistoryScreen(),
+                builder: (context, state) => const ConversationHistoryScreen(),
               ),
             ],
           ),
@@ -97,9 +96,8 @@ GoRouter createRouter({String initialLocation = AppRoutes.home}) {
         builder: (context, state) => const EnglishLearningScreen(),
       ),
     ],
-    errorBuilder: (context, state) => _RouteNotFoundScreen(
-      location: state.uri.toString(),
-    ),
+    errorBuilder: (context, state) =>
+        _RouteNotFoundScreen(location: state.uri.toString()),
   );
 }
 
@@ -128,7 +126,9 @@ class _RouteNotFoundScreen extends StatelessWidget {
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: () => context.go(AppRoutes.home),
-                child: Text(MaterialLocalizations.of(context).backButtonTooltip),
+                child: Text(
+                  MaterialLocalizations.of(context).backButtonTooltip,
+                ),
               ),
             ],
           ),

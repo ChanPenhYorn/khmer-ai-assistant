@@ -27,7 +27,6 @@ Dio dio(Ref ref) {
       connectTimeout: config.requestTimeout,
       sendTimeout: config.requestTimeout,
       receiveTimeout: config.requestTimeout,
-      responseType: ResponseType.json,
       headers: const {'Accept': 'application/json'},
     ),
   );
