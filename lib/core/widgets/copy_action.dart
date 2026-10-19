@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -9,6 +11,8 @@ import '../../core/utils/context_extensions.dart';
 Future<bool> copyToClipboard(BuildContext context, String text) async {
   if (text.trim().isEmpty) return false;
   await Clipboard.setData(ClipboardData(text: text));
+  // Fire and forget: feedback must never delay the confirmation.
+  unawaited(HapticFeedback.selectionClick());
   if (context.mounted) context.showSnack(context.l10n.chatCopied);
   return true;
 }

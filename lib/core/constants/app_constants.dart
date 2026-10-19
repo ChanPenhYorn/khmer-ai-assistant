@@ -17,6 +17,26 @@ class AppConstants {
   static const double radiusLg = 24;
   static const double radiusXl = 28;
 
+  /// Width breakpoints.
+  ///
+  /// Below [breakpointMedium] the app is compact: bottom navigation, single
+  /// column. At or above it there is room for a navigation rail and for
+  /// side-by-side panes, so both the shell and the tool screens switch layout.
+  static const double breakpointMedium = 840;
+
+  /// Width at which the navigation rail shows its labels.
+  static const double breakpointExpanded = 1200;
+
+  /// Maximum measure for a readable single column of text.
+  static const double contentMaxWidth = 720;
+
+  /// Maximum width of the conversation column on wide screens. Wider than
+  /// [contentMaxWidth] because assistant answers carry code blocks and tables.
+  static const double chatMaxWidth = 880;
+
+  /// Maximum width of the two-pane tool layout.
+  static const double toolMaxWidth = 1160;
+
   /// Minimum tap target, aligned with Material accessibility guidance.
   static const double minTapTarget = 48;
 

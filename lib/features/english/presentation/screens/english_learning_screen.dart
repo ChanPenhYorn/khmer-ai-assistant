@@ -6,10 +6,10 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_error_view.dart';
-import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/language_selector.dart';
 import '../../../../core/widgets/output_card.dart';
+import '../../../../core/widgets/tool_panes.dart';
 import '../providers/english_controller.dart';
 
 /// English learning: words, phrases and sentences explained in Khmer.
@@ -55,9 +55,8 @@ class _EnglishLearningScreenState extends ConsumerState<EnglishLearningScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.englishTitle)),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(AppConstants.spaceMd),
-          children: [
+        child: ToolPanes(
+          inputPane: [
             AppTextField(
               controller: _inputController,
               hintText: l10n.englishInputHint,
@@ -90,16 +89,16 @@ class _EnglishLearningScreenState extends ConsumerState<EnglishLearningScreen> {
                 onRetry: controller.retry,
               ),
             ],
-            if (state.isLoading) const AppLoadingIndicator(),
-            const SizedBox(height: AppConstants.spaceLg),
+          ],
+          outputPane: [
             OutputCard(
               label: l10n.englishOutputLabel,
               text: state.output,
               placeholder: l10n.englishOutputPlaceholder,
               minHeight: 120,
+              isLoading: state.isLoading,
               onClear: state.output.isEmpty ? null : controller.clearOutput,
             ),
-            const SizedBox(height: AppConstants.spaceXl),
           ],
         ),
       ),

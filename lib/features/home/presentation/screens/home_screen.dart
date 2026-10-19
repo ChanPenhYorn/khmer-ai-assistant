@@ -7,6 +7,7 @@ import '../../../../core/config/app_providers.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/network/connectivity_providers.dart';
 import '../../../../core/utils/context_extensions.dart';
+import '../../../../core/widgets/content_width.dart';
 import '../../../../core/widgets/feature_card.dart';
 import '../../../../core/widgets/info_banner.dart';
 import '../../../../core/widgets/section_header.dart';
@@ -68,123 +69,143 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(AppConstants.spaceMd),
-          children: [
-            if (isOffline)
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppConstants.spaceMd),
-                child: InfoBanner(
-                  title: l10n.offlineBanner,
-                  message: l10n.errorNetwork,
-                  icon: Icons.wifi_off,
-                  tone: InfoBannerTone.warning,
-                ),
-              ),
-            if (config.useMockDataSource)
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppConstants.spaceMd),
-                child: InfoBanner(
-                  title: l10n.demoModeTitle,
-                  message: l10n.demoModeBody,
-                ),
-              )
-            else if (config.isMisconfigured)
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppConstants.spaceMd),
-                child: InfoBanner(
-                  title: l10n.settingsServerMissing,
-                  message: l10n.errorMisconfigured,
-                  icon: Icons.settings_suggest_outlined,
-                  tone: InfoBannerTone.warning,
-                ),
-              ),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(
-                AppConstants.spaceLg,
-                AppConstants.spaceLg,
-                AppConstants.spaceLg,
-                AppConstants.spaceMd,
-              ),
-              decoration: BoxDecoration(
-                color: context.colors.primaryContainer,
-                borderRadius: BorderRadius.circular(AppConstants.radiusXl),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.homeGreeting, style: context.texts.headlineSmall),
-                  const SizedBox(height: AppConstants.spaceSm),
-                  Text(
-                    l10n.homeSubtitle,
-                    style: context.texts.bodyMedium?.copyWith(
-                      color: context.colors.onPrimaryContainer,
-                    ),
-                  ),
-                  const SizedBox(height: AppConstants.spaceMd),
-                  _AskAnythingField(
-                    controller: _askController,
-                    hint: l10n.homeAskHint,
-                    semanticLabel: l10n.homeAskLabel,
-                    onSubmitted: _ask,
-                  ),
-                ],
-              ),
+        child: ContentWidth(
+          padding: EdgeInsets.zero,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(
+              AppConstants.spaceMd,
+              AppConstants.spaceMd,
+              AppConstants.spaceMd,
+              AppConstants.spaceMd + 72,
             ),
-            if (usage.remainingRequests != null)
-              Padding(
-                padding: const EdgeInsets.only(top: AppConstants.spaceSm),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.bolt_outlined,
-                      size: 16,
-                      color: context.colors.onSurfaceVariant,
-                    ),
-                    const SizedBox(width: AppConstants.spaceXs),
-                    Expanded(
-                      child: Text(
-                        l10n.quotaRemaining(usage.remainingRequests!),
-                        style: context.texts.bodySmall?.copyWith(
-                          color: context.colors.onSurfaceVariant,
+            children: [
+              if (isOffline)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppConstants.spaceMd),
+                  child: InfoBanner(
+                    title: l10n.offlineBanner,
+                    message: l10n.errorNetwork,
+                    icon: Icons.wifi_off,
+                    tone: InfoBannerTone.warning,
+                  ),
+                ),
+              if (config.useMockDataSource)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppConstants.spaceMd),
+                  child: InfoBanner(
+                    title: l10n.demoModeTitle,
+                    message: l10n.demoModeBody,
+                  ),
+                )
+              else if (config.isMisconfigured)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppConstants.spaceMd),
+                  child: InfoBanner(
+                    title: l10n.settingsServerMissing,
+                    message: l10n.errorMisconfigured,
+                    icon: Icons.settings_suggest_outlined,
+                    tone: InfoBannerTone.warning,
+                  ),
+                ),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(
+                  AppConstants.spaceLg,
+                  AppConstants.spaceLg,
+                  AppConstants.spaceLg,
+                  AppConstants.spaceMd,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      context.colors.primaryContainer,
+                      Color.alphaBlend(
+                        context.colors.secondaryContainer.withValues(
+                          alpha: 0.6,
                         ),
+                        context.colors.primaryContainer,
                       ),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(AppConstants.radiusXl),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.homeGreeting, style: context.texts.headlineSmall),
+                    const SizedBox(height: AppConstants.spaceSm),
+                    Text(
+                      l10n.homeSubtitle,
+                      style: context.texts.bodyMedium?.copyWith(
+                        color: context.colors.onPrimaryContainer,
+                      ),
+                    ),
+                    const SizedBox(height: AppConstants.spaceMd),
+                    _AskAnythingField(
+                      controller: _askController,
+                      hint: l10n.homeAskHint,
+                      semanticLabel: l10n.homeAskLabel,
+                      onSubmitted: _ask,
                     ),
                   ],
                 ),
               ),
-            SectionHeader(title: l10n.homeQuickActionsTitle),
-            const SizedBox(height: AppConstants.spaceXs),
-            _ToolGrid(onOpen: (route) => context.push(route)),
-            SectionHeader(title: l10n.homeSuggestionsTitle),
-            const SizedBox(height: AppConstants.spaceXs),
-            Wrap(
-              spacing: AppConstants.spaceSm,
-              runSpacing: AppConstants.spaceSm,
-              children: [
-                for (final suggestion in <String>[
-                  l10n.homeSuggestion1,
-                  l10n.homeSuggestion2,
-                  l10n.homeSuggestion3,
-                  l10n.homeSuggestion4,
-                ])
-                  ActionChip(
-                    avatar: const Icon(Icons.lightbulb_outline, size: 18),
-                    label: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 280),
-                      child: Text(
-                        suggestion,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+              if (usage.remainingRequests != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: AppConstants.spaceSm),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.bolt_outlined,
+                        size: 16,
+                        color: context.colors.onSurfaceVariant,
                       ),
-                    ),
-                    onPressed: () => _askSuggestion(suggestion),
+                      const SizedBox(width: AppConstants.spaceXs),
+                      Expanded(
+                        child: Text(
+                          l10n.quotaRemaining(usage.remainingRequests!),
+                          style: context.texts.bodySmall?.copyWith(
+                            color: context.colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-              ],
-            ),
-            const SizedBox(height: AppConstants.spaceXl),
-          ],
+                ),
+              SectionHeader(title: l10n.homeQuickActionsTitle),
+              const SizedBox(height: AppConstants.spaceXs),
+              _ToolGrid(onOpen: (route) => context.push(route)),
+              SectionHeader(title: l10n.homeSuggestionsTitle),
+              const SizedBox(height: AppConstants.spaceXs),
+              Wrap(
+                spacing: AppConstants.spaceSm,
+                runSpacing: AppConstants.spaceSm,
+                children: [
+                  for (final suggestion in <String>[
+                    l10n.homeSuggestion1,
+                    l10n.homeSuggestion2,
+                    l10n.homeSuggestion3,
+                    l10n.homeSuggestion4,
+                  ])
+                    ActionChip(
+                      avatar: const Icon(Icons.lightbulb_outline, size: 18),
+                      label: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 280),
+                        child: Text(
+                          suggestion,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      onPressed: () => _askSuggestion(suggestion),
+                    ),
+                ],
+              ),
+              const SizedBox(height: AppConstants.spaceXl),
+            ],
+          ),
         ),
       ),
     );

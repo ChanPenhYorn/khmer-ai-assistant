@@ -475,6 +475,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'This build has no usage data from the server.';
 
   @override
+  String settingsUsageInputTokens(int count) {
+    return 'Input tokens: $count';
+  }
+
+  @override
+  String settingsUsageOutputTokens(int count) {
+    return 'Output tokens: $count';
+  }
+
+  @override
   String get settingsServerMode => 'Server mode';
 
   @override

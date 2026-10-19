@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/utils/context_extensions.dart';
 import 'copy_action.dart';
+import 'skeleton.dart';
 
 /// Result panel shared by the assistant tool screens.
 ///
@@ -17,6 +18,7 @@ class OutputCard extends StatelessWidget {
     this.onClear,
     this.draftNotice,
     this.minHeight = 96,
+    this.isLoading = false,
   });
 
   final String label;
@@ -28,6 +30,9 @@ class OutputCard extends StatelessWidget {
   final String? draftNotice;
 
   final double minHeight;
+
+  /// Shows placeholder paragraphs while the answer is being generated.
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -62,14 +67,16 @@ class OutputCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppConstants.radiusMd),
             border: Border.all(color: colors.outlineVariant),
           ),
-          child: SelectableText(
-            hasText ? text : placeholder,
-            style: hasText
-                ? context.texts.bodyLarge
-                : context.texts.bodyLarge?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  ),
-          ),
+          child: isLoading && !hasText
+              ? const _OutputSkeleton()
+              : SelectableText(
+                  hasText ? text : placeholder,
+                  style: hasText
+                      ? context.texts.bodyLarge
+                      : context.texts.bodyLarge?.copyWith(
+                          color: colors.onSurfaceVariant,
+                        ),
+                ),
         ),
         if (hasText && draftNotice != null)
           Padding(
@@ -81,6 +88,25 @@ class OutputCard extends StatelessWidget {
               ),
             ),
           ),
+      ],
+    );
+  }
+}
+
+/// Three placeholder lines standing in for a paragraph that is still coming.
+class _OutputSkeleton extends StatelessWidget {
+  const _OutputSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SkeletonBox(height: 14),
+        SizedBox(height: AppConstants.spaceSm),
+        SkeletonBox(height: 14),
+        SizedBox(height: AppConstants.spaceSm),
+        SkeletonBox(width: 180, height: 14),
       ],
     );
   }

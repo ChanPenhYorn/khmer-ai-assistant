@@ -476,6 +476,16 @@ class AppLocalizationsKm extends AppLocalizations {
       'កំណែនេះមិនមានទិន្នន័យប្រើប្រាស់ពីម៉ាស៊ីនមេទេ។';
 
   @override
+  String settingsUsageInputTokens(int count) {
+    return 'ថូខឹនបញ្ចូល៖ $count';
+  }
+
+  @override
+  String settingsUsageOutputTokens(int count) {
+    return 'ថូខឹនបញ្ចេញ៖ $count';
+  }
+
+  @override
   String get settingsServerMode => 'របៀបភ្ជាប់ម៉ាស៊ីនមេ';
 
   @override

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,6 +12,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../core/widgets/app_error_view.dart';
 import '../../../../core/widgets/app_loading_indicator.dart';
+import '../../../../core/widgets/content_width.dart';
 import '../../../../core/widgets/empty_state_view.dart';
 import '../controllers/chat_controller.dart';
 import '../providers/chat_providers.dart';
@@ -219,42 +223,60 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
           ),
         Expanded(
-          child: messages.isEmpty
-              ? EmptyStateView(
-                  title: l10n.chatEmptyTitle,
-                  body: l10n.chatEmptyBody,
-                  suggestions: [
-                    l10n.chatEmptySuggestion1,
-                    l10n.chatEmptySuggestion2,
-                    l10n.chatEmptySuggestion3,
-                  ],
-                  onSuggestionSelected: (suggestion) =>
-                      _submit(suggestion, controller),
-                )
-              : ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.fromLTRB(
-                    AppConstants.spaceMd,
-                    AppConstants.spaceMd,
-                    AppConstants.spaceMd,
-                    AppConstants.spaceSm,
+          child: ContentWidth(
+            maxWidth: AppConstants.chatMaxWidth,
+            padding: EdgeInsets.zero,
+            child: messages.isEmpty
+                ? EmptyStateView(
+                    title: l10n.chatEmptyTitle,
+                    body: l10n.chatEmptyBody,
+                    suggestions: [
+                      l10n.chatEmptySuggestion1,
+                      l10n.chatEmptySuggestion2,
+                      l10n.chatEmptySuggestion3,
+                    ],
+                    onSuggestionSelected: (suggestion) =>
+                        _submit(suggestion, controller),
+                  )
+                : ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.fromLTRB(
+                      AppConstants.spaceMd,
+                      AppConstants.spaceMd,
+                      AppConstants.spaceMd,
+                      AppConstants.spaceSm,
+                    ),
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final message = messages[index];
+                      final startsNewDay =
+                          index == 0 ||
+                          !_isSameDay(
+                            messages[index - 1].createdAt,
+                            message.createdAt,
+                          );
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (startsNewDay)
+                            _DaySeparator(date: message.createdAt),
+                          ChatMessageBubble(
+                            message: message,
+                            isLastAssistantMessage:
+                                message.id == lastAssistantId &&
+                                !message.isStreaming,
+                            onRegenerate:
+                                message.id == lastAssistantId &&
+                                    !message.isStreaming &&
+                                    !state.isGenerating
+                                ? controller.regenerate
+                                : null,
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final message = messages[index];
-                    return ChatMessageBubble(
-                      message: message,
-                      isLastAssistantMessage:
-                          message.id == lastAssistantId && !message.isStreaming,
-                      onRegenerate:
-                          message.id == lastAssistantId &&
-                              !message.isStreaming &&
-                              !state.isGenerating
-                          ? controller.regenerate
-                          : null,
-                    );
-                  },
-                ),
+          ),
         ),
         ChatComposer(
           controller: _composerController,
@@ -262,6 +284,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           isGenerating: state.isGenerating,
           enabled: true,
           maxLength: maxInput,
+          maxWidth: AppConstants.chatMaxWidth,
           onSend: () => _submit(_composerController.text, controller),
           onStop: controller.stop,
         ),
@@ -271,6 +294,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   Future<void> _submit(String text, ChatController controller) async {
     if (text.trim().isEmpty) return;
+    // Fire and forget: feedback must never delay the send.
+    unawaited(HapticFeedback.lightImpact());
     _stickToBottom = true;
     _composerController.clear();
     await controller.send(text);
@@ -337,3 +362,40 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 }
 
 enum _ChatMenuAction { rename, delete, history }
+
+/// `true` when both instants fall on the same calendar day.
+bool _isSameDay(DateTime a, DateTime b) =>
+    a.year == b.year && a.month == b.month && a.day == b.day;
+
+/// Date marker between messages sent on different days.
+class _DaySeparator extends StatelessWidget {
+  const _DaySeparator({required this.date});
+
+  final DateTime date;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = MaterialLocalizations.of(context).formatMediumDate(date);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppConstants.spaceMd),
+      child: Row(
+        children: [
+          const Expanded(child: Divider()),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppConstants.spaceSm,
+            ),
+            child: Text(
+              label,
+              style: context.texts.labelSmall?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
+          ),
+          const Expanded(child: Divider()),
+        ],
+      ),
+    );
+  }
+}

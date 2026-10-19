@@ -181,6 +181,18 @@
   "settingsThemeDark": "Dark",
   "settingsUsageTitle": "AI usage",
   "settingsUsageUnavailable": "This build has no usage data from the server.",
+  "settingsUsageInputTokens": "Input tokens: {count}",
+  "@settingsUsageInputTokens": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "settingsUsageOutputTokens": "Output tokens: {count}",
+  "@settingsUsageOutputTokens": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "settingsServerMode": "Server mode",
   "settingsServerLive": "Connected to a real AI server",
   "settingsServerDemo": "Demo mode (offline sample replies)",

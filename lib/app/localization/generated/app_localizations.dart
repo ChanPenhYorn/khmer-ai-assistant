@@ -944,6 +944,18 @@ abstract class AppLocalizations {
   /// **'This build has no usage data from the server.'**
   String get settingsUsageUnavailable;
 
+  /// No description provided for @settingsUsageInputTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'Input tokens: {count}'**
+  String settingsUsageInputTokens(int count);
+
+  /// No description provided for @settingsUsageOutputTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'Output tokens: {count}'**
+  String settingsUsageOutputTokens(int count);
+
   /// No description provided for @settingsServerMode.
   ///
   /// In en, this message translates to:

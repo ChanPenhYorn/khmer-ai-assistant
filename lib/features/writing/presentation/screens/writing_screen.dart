@@ -11,6 +11,7 @@ import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/copy_action.dart';
 import '../../../../core/widgets/language_selector.dart';
+import '../../../../core/widgets/tool_panes.dart';
 import '../providers/writing_controller.dart';
 
 /// Writing assistant: improve, rewrite, reformat and draft text.
@@ -66,9 +67,8 @@ class _WritingScreenState extends ConsumerState<WritingScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.writingTitle)),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(AppConstants.spaceMd),
-          children: [
+        child: ToolPanes(
+          inputPane: [
             OptionChips<WritingAction>(
               options: WritingAction.values,
               selected: state.action,
@@ -117,8 +117,12 @@ class _WritingScreenState extends ConsumerState<WritingScreen> {
                 onRetry: controller.retry,
               ),
             ],
-            if (state.isLoading) const AppLoadingIndicator(),
-            const SizedBox(height: AppConstants.spaceLg),
+          ],
+          outputPane: [
+            if (state.isLoading) ...[
+              const AppLoadingIndicator(),
+              const SizedBox(height: AppConstants.spaceLg),
+            ],
             _EditableDraft(
               controller: _outputController,
               label: l10n.writingOutputLabel,
@@ -128,7 +132,6 @@ class _WritingScreenState extends ConsumerState<WritingScreen> {
               onChanged: controller.setOutput,
               onClear: state.output.isEmpty ? null : controller.clearOutput,
             ),
-            const SizedBox(height: AppConstants.spaceXl),
           ],
         ),
       ),

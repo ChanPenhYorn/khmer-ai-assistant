@@ -7,10 +7,10 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_error_view.dart';
-import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/language_selector.dart';
 import '../../../../core/widgets/output_card.dart';
+import '../../../../core/widgets/tool_panes.dart';
 import '../providers/summarize_controller.dart';
 
 /// Summarization screen: paste text, choose a style, get key points.
@@ -55,9 +55,8 @@ class _SummarizeScreenState extends ConsumerState<SummarizeScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.summarizeTitle)),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(AppConstants.spaceMd),
-          children: [
+        child: ToolPanes(
+          inputPane: [
             OptionChips<SummaryStyle>(
               options: SummaryStyle.values,
               selected: state.style,
@@ -105,16 +104,16 @@ class _SummarizeScreenState extends ConsumerState<SummarizeScreen> {
                 onRetry: controller.retry,
               ),
             ],
-            if (state.isLoading) const AppLoadingIndicator(),
-            const SizedBox(height: AppConstants.spaceLg),
+          ],
+          outputPane: [
             OutputCard(
               label: l10n.summarizeOutputLabel,
               text: state.output,
               placeholder: l10n.summarizeOutputPlaceholder,
               draftNotice: l10n.writingOutputNotice,
+              isLoading: state.isLoading,
               onClear: state.output.isEmpty ? null : controller.clearOutput,
             ),
-            const SizedBox(height: AppConstants.spaceXl),
           ],
         ),
       ),

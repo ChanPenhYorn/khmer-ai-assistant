@@ -155,6 +155,8 @@
   "settingsThemeDark": "ងងឹត",
   "settingsUsageTitle": "ការប្រើប្រាស់ AI",
   "settingsUsageUnavailable": "កំណែនេះមិនមានទិន្នន័យប្រើប្រាស់ពីម៉ាស៊ីនមេទេ។",
+  "settingsUsageInputTokens": "ថូខឹនបញ្ចូល៖ {count}",
+  "settingsUsageOutputTokens": "ថូខឹនបញ្ចេញ៖ {count}",
   "settingsServerMode": "របៀបភ្ជាប់ម៉ាស៊ីនមេ",
   "settingsServerLive": "បានភ្ជាប់ទៅម៉ាស៊ីនមេ AI ពិតប្រាកដ",
   "settingsServerDemo": "របៀបសាកល្បង (ចម្លើយគំរូក្នុងកម្មវិធី)",

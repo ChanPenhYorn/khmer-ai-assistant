@@ -8,6 +8,7 @@ import '../../../../core/config/app_providers.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/network/dio_providers.dart';
 import '../../../../core/utils/context_extensions.dart';
+import '../../../../core/widgets/content_width.dart';
 import '../../../../core/widgets/info_banner.dart';
 import '../../../../core/widgets/section_header.dart';
 import '../../../../core/widgets/language_selector.dart';
@@ -35,70 +36,73 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(AppConstants.spaceMd),
-          children: [
-            SectionHeader(title: l10n.settingsInterfaceLanguage),
-            _LanguageTile(
-              settings: settings,
-              onChanged: settingsController.setLocaleCode,
-            ),
-            SectionHeader(title: l10n.settingsAppearance),
-            _ThemeTile(
-              settings: settings,
-              onChanged: settingsController.setThemeMode,
-            ),
-            SectionHeader(title: l10n.settingsUsageTitle),
-            const _UsageTile(),
-            SectionHeader(title: l10n.settingsServerMode),
-            _ServerModeTile(config: config),
-            SectionHeader(title: l10n.settingsPrivacyTitle),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppConstants.spaceMd),
-                child: Text(
-                  l10n.settingsPrivacyBody,
-                  style: context.texts.bodyMedium,
+        child: ContentWidth(
+          padding: EdgeInsets.zero,
+          child: ListView(
+            padding: const EdgeInsets.all(AppConstants.spaceMd),
+            children: [
+              SectionHeader(title: l10n.settingsInterfaceLanguage),
+              _LanguageTile(
+                settings: settings,
+                onChanged: settingsController.setLocaleCode,
+              ),
+              SectionHeader(title: l10n.settingsAppearance),
+              _ThemeTile(
+                settings: settings,
+                onChanged: settingsController.setThemeMode,
+              ),
+              SectionHeader(title: l10n.settingsUsageTitle),
+              const _UsageTile(),
+              SectionHeader(title: l10n.settingsServerMode),
+              _ServerModeTile(config: config),
+              SectionHeader(title: l10n.settingsPrivacyTitle),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppConstants.spaceMd),
+                  child: Text(
+                    l10n.settingsPrivacyBody,
+                    style: context.texts.bodyMedium,
+                  ),
                 ),
               ),
-            ),
-            SectionHeader(title: l10n.settingsDataTitle),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.delete_sweep_outlined),
-                title: Text(l10n.settingsClearHistory),
-                subtitle: Text(l10n.settingsClearHistoryBody),
-                onTap: () => _clearHistory(context),
+              SectionHeader(title: l10n.settingsDataTitle),
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.delete_sweep_outlined),
+                  title: Text(l10n.settingsClearHistory),
+                  subtitle: Text(l10n.settingsClearHistoryBody),
+                  onTap: () => _clearHistory(context),
+                ),
               ),
-            ),
-            SectionHeader(title: l10n.settingsAdvancedTitle),
-            const _AccessTokenCard(),
-            SectionHeader(title: l10n.settingsAboutTitle),
-            Card(
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.info_outline),
-                    title: const Text(AppConfig.appName),
-                    subtitle: Text(l10n.appTagline),
-                  ),
-                  FutureBuilder<PackageInfo>(
-                    future: PackageInfo.fromPlatform(),
-                    builder: (context, snapshot) {
-                      final version = snapshot.hasData
-                          ? '${snapshot.data!.version}+${snapshot.data!.buildNumber}'
-                          : AppConfig.version;
-                      return ListTile(
-                        leading: const Icon(Icons.tag),
-                        title: Text(l10n.settingsVersion(version)),
-                      );
-                    },
-                  ),
-                ],
+              SectionHeader(title: l10n.settingsAdvancedTitle),
+              const _AccessTokenCard(),
+              SectionHeader(title: l10n.settingsAboutTitle),
+              Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.info_outline),
+                      title: const Text(AppConfig.appName),
+                      subtitle: Text(l10n.appTagline),
+                    ),
+                    FutureBuilder<PackageInfo>(
+                      future: PackageInfo.fromPlatform(),
+                      builder: (context, snapshot) {
+                        final version = snapshot.hasData
+                            ? '${snapshot.data!.version}+${snapshot.data!.buildNumber}'
+                            : AppConfig.version;
+                        return ListTile(
+                          leading: const Icon(Icons.tag),
+                          title: Text(l10n.settingsVersion(version)),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: AppConstants.spaceXl),
-          ],
+              const SizedBox(height: AppConstants.spaceXl),
+            ],
+          ),
         ),
       ),
     );
@@ -205,8 +209,10 @@ class _UsageTile extends ConsumerWidget {
     final lines = <String>[
       if (usage.remainingRequests != null)
         l10n.quotaRemaining(usage.remainingRequests!),
-      if (usage.inputTokens != null) 'Input tokens: ${usage.inputTokens}',
-      if (usage.outputTokens != null) 'Output tokens: ${usage.outputTokens}',
+      if (usage.inputTokens != null)
+        l10n.settingsUsageInputTokens(usage.inputTokens!),
+      if (usage.outputTokens != null)
+        l10n.settingsUsageOutputTokens(usage.outputTokens!),
     ];
 
     return Card(

@@ -7,9 +7,9 @@ import '../../../../core/config/app_providers.dart';
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_error_view.dart';
-import '../../../../core/widgets/app_loading_indicator.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/output_card.dart';
+import '../../../../core/widgets/tool_panes.dart';
 import '../../../../core/widgets/language_selector.dart';
 import '../providers/translation_controller.dart';
 
@@ -56,9 +56,8 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.translateTitle)),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(AppConstants.spaceMd),
-          children: [
+        child: ToolPanes(
+          inputPane: [
             _LanguageBar(
               source: state.source,
               target: state.target,
@@ -86,17 +85,12 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
                     ),
             ),
             const SizedBox(height: AppConstants.spaceSm),
-            Row(
-              children: [
-                Expanded(
-                  child: AppButton(
-                    label: l10n.translateAction,
-                    icon: Icons.translate,
-                    isLoading: state.isLoading,
-                    onPressed: state.canTranslate ? controller.translate : null,
-                  ),
-                ),
-              ],
+            AppButton(
+              label: l10n.translateAction,
+              icon: Icons.translate,
+              expand: true,
+              isLoading: state.isLoading,
+              onPressed: state.canTranslate ? controller.translate : null,
             ),
             if (state.status.hasFailed && state.failure != null) ...[
               const SizedBox(height: AppConstants.spaceMd),
@@ -106,7 +100,6 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
                 onRetry: controller.retry,
               ),
             ],
-            if (state.isLoading) const AppLoadingIndicator(),
             if (state.detectedLanguageCode != null) ...[
               const SizedBox(height: AppConstants.spaceMd),
               Text(
@@ -121,11 +114,13 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
                 ),
               ),
             ],
-            const SizedBox(height: AppConstants.spaceLg),
+          ],
+          outputPane: [
             OutputCard(
               label: l10n.translateOutputLabel,
               text: state.output,
               placeholder: l10n.translateOutputEmpty,
+              isLoading: state.isLoading,
               onClear: state.output.isEmpty ? null : controller.clearOutput,
             ),
             const SizedBox(height: AppConstants.spaceMd),
@@ -135,7 +130,6 @@ class _TranslationScreenState extends ConsumerState<TranslationScreen> {
                 color: context.colors.onSurfaceVariant,
               ),
             ),
-            const SizedBox(height: AppConstants.spaceXl),
           ],
         ),
       ),

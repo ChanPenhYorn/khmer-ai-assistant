@@ -52,7 +52,15 @@ class _UserBubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
-              constraints: const BoxConstraints(maxWidth: 560),
+              constraints: BoxConstraints(
+                // Relative on narrow screens so the bubble never fills the
+                // whole measure; capped so a single line stays readable when
+                // the window is very wide.
+                maxWidth: (MediaQuery.sizeOf(context).width * 0.78).clamp(
+                  0.0,
+                  560.0,
+                ),
+              ),
               padding: const EdgeInsets.symmetric(
                 horizontal: AppConstants.spaceMd,
                 vertical: AppConstants.spaceSm + 2,
@@ -160,8 +168,10 @@ class _AssistantBubble extends StatelessWidget {
             const SizedBox(height: AppConstants.spaceSm),
             if (isEmpty && message.isStreaming)
               const AppLoadingIndicator(size: 22)
-            else
+            else ...[
               MarkdownText(data: message.content),
+              if (message.isStreaming) const _StreamingCaret(),
+            ],
             if (showActions && !isEmpty && !message.isStreaming) ...[
               const SizedBox(height: AppConstants.spaceXs),
               Row(
@@ -194,4 +204,44 @@ String _formatTime(BuildContext context, DateTime date) {
     time,
     alwaysUse24HourFormat: MediaQuery.alwaysUse24HourFormatOf(context),
   );
+}
+
+/// Pulsing block placed after the text while a reply is still streaming.
+class _StreamingCaret extends StatefulWidget {
+  const _StreamingCaret();
+
+  @override
+  State<_StreamingCaret> createState() => _StreamingCaretState();
+}
+
+class _StreamingCaretState extends State<_StreamingCaret>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 800),
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppConstants.spaceXs),
+      child: FadeTransition(
+        opacity: _controller,
+        child: Container(
+          width: 3,
+          height: 16,
+          decoration: BoxDecoration(
+            color: context.colors.primary,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+      ),
+    );
+  }
 }
